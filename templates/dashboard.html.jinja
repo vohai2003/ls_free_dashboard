@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f9;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+
+        .dashboard {
+            text-align: center;
+        }
+
+        h1 {
+            color: #333;
+            margin-bottom: 30px;
+        }
+
+        .card {
+            background-color: #ffffff;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            margin: 20px auto;
+            padding: 20px;
+            width: 250px;
+        }
+
+        .card h2 {
+            color: #555;
+            font-size: 1.5rem;
+            margin-bottom: 10px;
+        }
+
+        .card p {
+            font-size: 2rem;
+            color: #007bff;
+        }
+
+        .card:nth-child(2) p {
+            color: #28a745;
+        }
+
+        .card:nth-child(3) p {
+            color: #ffc107;
+        }
+
+        .card:nth-child(4) p {
+            color: #dc3545;
+        }
+        button {
+            background-color: #007bff; /* Primary color similar to the Total Task card */
+            color: #fff;               /* White text */
+            border: none;
+            padding: 10px 20px;        /* Padding for a larger clickable area */
+            font-size: 1rem;           /* Make the text large enough */
+            border-radius: 5px;        /* Rounded corners for a modern look */
+            cursor: pointer;           /* Pointer cursor on hover */
+            transition: background-color 0.3s, box-shadow 0.3s; /* Smooth transition on hover */
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Slight shadow for depth */
+            margin: 20px auto;         /* Center the button and add space */
+            display: block;            /* Make the button take up the full width of its container */
+        }
+
+        /* Button hover effect */
+        button:hover {
+            background-color: #0056b3; /* Darker shade on hover */
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15); /* Stronger shadow on hover */
+        }
+
+        /* Button active (pressed) effect */
+        button:active {
+            background-color: #00408d; /* Even darker shade when pressed */
+        }
+    </style>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.6.2/chart.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/chartjs-plugin-datalabels/2.0.0/chartjs-plugin-datalabels.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js" type="text/javascript"></script>
+    <script>
+        setTimeout(function(){
+            location.reload();
+        }, 60000); // 60000 milliseconds = 1 minute
+    </script>
+</head>
+<body>
+    <div class="dashboard">
+        <div id="firstDashboard">
+            <h1>Label Studio Task Dashboard</h1>
+            <div class="card">
+                <h2>Total Task</h2>
+                <p>{{totaltask}}</p>
+            </div>
+            <div class="card">
+                <h2>Annotated</h2>
+                <p>{{annotated}}</p>
+            </div>
+            <div class="card">
+                <h2>Complete percentage</h2>
+                <p>{{pctage}}</p>
+            </div>
+            <div class="card">
+                <h2>Overlapped</h2>
+                <p>{{overlapped}}</p>
+            </div>
+            <div class="card">
+                <h2>Total Instance (Min)</h2>
+                <p>{{totalinstance}}</p>
+            </div>
+            <button id="openSecondDashboard">View Instance Dashboard</button>
+        </div>
+        <div id="secondDashboard" style="display:none;">
+            <h1>Instance Dashboard</h1>
+            <canvas id="pieChart" width="400" height="400"></canvas>
+            <button id="backToFirstDashboard">Back to Task Dashboard</button>
+        </div>
+    </div>
+
+
+
+
+
+    <script>
+        // Event listener to open the second dashboard (Pie Chart Dashboard)
+        $("#openSecondDashboard").click(function() {
+            $("#firstDashboard").hide();      // Hide the first dashboard
+            $("#secondDashboard").show();     // Show the second dashboard
+            renderPieChart();                 // Render the pie chart
+        });
+
+        // Event listener to go back to the first dashboard
+        $("#backToFirstDashboard").click(function() {
+            $("#secondDashboard").hide();     // Hide the second dashboard
+            $("#firstDashboard").show();      // Show the first dashboard
+        });
+
+        // Function to render the pie chart using Chart.js
+        function renderPieChart() {
+            Chart.register(ChartDataLabels)
+            let ctx = document.getElementById('pieChart').getContext('2d');
+
+            // Example data for the pie chart
+            let chartData = {
+                labels: ['Background Image', '1 instance', 'More than 1 instance'],
+                datasets: [{
+                    data: [{{bckground}}, {{oneinstance}}, {{morethanone}}], // Sample data, adjust as needed
+                    backgroundColor: ['#007bff', '#28a745', '#ffc107'],
+                }]
+            };
+            var options = {
+
+                plugins: {
+
+                }
+            };
+
+            // Create the pie chart
+            new Chart(ctx, {
+                type: 'pie',
+                data: chartData,
+                options: {
+                    tooltips: {
+                        enabled: true
+                    },
+                    responsive: true,
+                    plugins: {
+                        legend: {
+                            position: 'top',
+                        },
+                        datalabels: {
+                            formatter: (value, ctx) => {
+                                let sum = 0;
+                                let dataArr = ctx.chart.data.datasets[0].data;
+                                dataArr.map(data => {
+                                    sum += data;
+                                });
+                                let percentage = (value*100 / sum).toFixed(2)+"%";
+                                return percentage;
+                            },
+                            color: '#fff',
+                        }
+                    }
+                }
+            });
+        }
+    </script>
+</body>
+</html>
