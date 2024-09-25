@@ -6,8 +6,8 @@ If you want a dashboard for your small project with your team, this is **maybe**
 This is a dashboard for Label Studio Free, allowing you to check for your team progress even on Free plan of Label Studio. It utilizes the Label Studio API and providing basic insights about your team progress (How many percent of your dataset is labeled, how many instances exist in your dataset so far, etc.). Not much info, but should be enough for your need.
 ## Installation and Run
 ### Cloning repository:
-`git clone https://github.com/vohai2003/ls_free_dashboard.git\
-cd ls_free_dashboard`
+`git clone https://github.com/vohai2003/ls_free_dashboard.git`\
+`cd ls_free_dashboard`
 ### Installing dependency:
 `pip install -r requirements.txt`\
 Please note that I assume that you've already installed `label-studio`, so it's not included in `requirements.txt`
@@ -17,5 +17,5 @@ Create a file `secret.json` on the same directory with `label_studio_dashboard.p
 ### Running dashboard
 `python label_studio_dashboard.py`
 # Known Issue
-There're some known issues:\
+There're some known issues:
 - "Overlapped" may not correctly show the number of tasks with more than 1 annotation.
